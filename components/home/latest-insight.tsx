@@ -34,7 +34,7 @@ const LatestInsights = ({
   buttons = {
     primary: {
       text: 'Read the Study',
-      url: '/research/regional-wellbeing',
+      url: '/insights/social-impact',
     },
     secondary: {
       text: 'View All Research',
