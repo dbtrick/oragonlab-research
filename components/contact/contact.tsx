@@ -105,6 +105,10 @@ const Contact = ({
     "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-2.svg",
     "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-3.svg",
     "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-4.svg",
+    "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-5.svg",
+    "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-6.svg",
+    "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-7.svg",
+    "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/company/fictional-company-logo-8.svg",
   ],
   className,
 }: ContactProps) => {
@@ -142,9 +146,11 @@ const Contact = ({
       if (!res.ok) throw new Error("Failed");
 
       setSuccess(true);
+      setError(null);
       e.currentTarget.reset();
       setInterest("");
     } catch {
+      setSuccess(false);
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -156,10 +162,10 @@ const Contact = ({
       <BlurFade delay={0.25} inView>
         <div className="container">
           <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-4">
-            {/* Left */}
+            {/* Left Side: Information */}
             <div className="flex flex-col items-center gap-4 lg:items-start lg:gap-8">
               <Badge variant="outline">{badge}</Badge>
-              <h3 className="mt-2 max-w-md text-center text-3xl font-medium lg:text-left lg:text-5xl">
+              <h3 className="mt-2 max-w-md text-center text-3xl font-medium lg:mt-0 lg:max-w-xl lg:text-left lg:text-5xl">
                 {heading}
               </h3>
 
@@ -167,9 +173,9 @@ const Contact = ({
                 {benefits.map((benefit, index) => (
                   <li
                     key={index}
-                    className="flex max-w-md items-start gap-2 px-4 lg:border-b lg:py-6"
+                    className="flex max-w-md items-start gap-2 px-4 last:hidden last:border-b-0 lg:border-b lg:py-6 last:lg:flex"
                   >
-                    <ArrowRight className="hidden size-6 lg:block" />
+                    <ArrowRight className="hidden size-6 shrink-0 lg:block" strokeWidth={1} />
                     <p className="text-center font-medium lg:text-left">
                       {benefit}
                     </p>
@@ -177,22 +183,32 @@ const Contact = ({
                 ))}
               </ul>
 
-              <div className="mt-20 hidden w-full lg:block">
+              <div className="mt-20 hidden w-full overflow-hidden lg:block">
                 <InfiniteMovingCarousel images={companies} />
               </div>
             </div>
 
-            {/* Right - Form */}
-            <Card className="w-full max-w-xl place-self-center bg-muted/70 px-4 pt-10 pb-4 lg:max-w-none">
+            {/* Right Side: Form Card */}
+            <Card className="w-full max-w-xl place-self-center bg-muted/70 px-4 pt-10 pb-4 lg:max-w-none lg:place-self-start">
               <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
-                <div className="flex gap-4">
+                <div className="flex w-full items-center gap-4">
                   <FormGroup>
                     <Label>First Name</Label>
-                    <Input name="firstName" placeholder="First name" />
+                    <Input 
+                      name="firstName" 
+                      placeholder="First name" 
+                      className="bg-background" 
+                      required 
+                    />
                   </FormGroup>
                   <FormGroup>
                     <Label>Last Name</Label>
-                    <Input name="lastName" placeholder="Last name" />
+                    <Input 
+                      name="lastName" 
+                      placeholder="Last name" 
+                      className="bg-background" 
+                      required 
+                    />
                   </FormGroup>
                 </div>
 
@@ -202,20 +218,27 @@ const Contact = ({
                     name="email"
                     type="email"
                     placeholder="name@organization.gov.au"
+                    className="bg-background"
                     required
                   />
                 </FormGroup>
 
                 <FormGroup>
                   <Label>Organization</Label>
-                  <Input name="organization" placeholder="Company or Agency" />
+                  <Input 
+                    name="organization" 
+                    placeholder="Company or Agency name" 
+                    className="bg-background" 
+                    required 
+                  />
                 </FormGroup>
 
                 <FormGroup>
-                  <Label>How can we help?</Label>
+                  <Label>How can our research team help you?</Label>
                   <Textarea
                     name="message"
-                    placeholder="Tell us about your project"
+                    placeholder="Tell us about your research goals or project requirements"
+                    className="bg-background"
                     required
                   />
                 </FormGroup>
@@ -223,36 +246,44 @@ const Contact = ({
                 <FormGroup>
                   <Label>Area of Interest</Label>
                   <Select value={interest} onValueChange={setInterest}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full bg-background">
                       <SelectValue placeholder="Select a service area" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="w-full">
                       <SelectItem value="strategic">Strategic Consulting</SelectItem>
                       <SelectItem value="qualitative">Qualitative Research</SelectItem>
                       <SelectItem value="quantitative">Quantitative Research</SelectItem>
                       <SelectItem value="analytics">Data Analytics</SelectItem>
+                      <SelectItem value="coaching">Executive Coaching</SelectItem>
                       <SelectItem value="other">General Enquiry</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormGroup>
 
-                <Button type="submit" disabled={loading} className="w-fit self-end">
-                  {loading ? "Sending..." : "Send Message"}
-                </Button>
+                <div className="flex flex-col items-end gap-4">
+                  <Button type="submit" disabled={loading} className="w-fit">
+                    {loading ? "Sending..." : "Send Message"}
+                  </Button>
 
-                {success && (
-                  <p className="text-sm text-green-600">
-                    Message sent successfully. We’ll be in touch.
-                  </p>
-                )}
-
-                {error && (
-                  <p className="text-sm text-red-600">{error}</p>
-                )}
+                  {/* Status Message Container */}
+                  <div className="min-h-[20px]">
+                    {success && (
+                      <p className="text-sm font-medium text-green-600">
+                        Message sent successfully. We’ll be in touch.
+                      </p>
+                    )}
+                    {error && (
+                      <p className="text-sm font-medium text-red-600">
+                        {error}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </form>
             </Card>
 
-            <div className="mt-20 block lg:hidden">
+            {/* Mobile Carousel */}
+            <div className="mt-20 block w-full overflow-hidden lg:hidden">
               <InfiniteMovingCarousel images={companies} />
             </div>
           </div>
