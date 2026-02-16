@@ -3,6 +3,12 @@ npm install resend
 
 1. Sign up at Resend
 2. Crate .env.local on the root directory 
+
+  //envlocal file content
+  RESEND_API_KEY=putyourapikeyhere
+  CONTACT_TO_EMAIL=putyouremailhere
+  CONTACT_FROM_EMAIL=onboarding@resend.dev
+
 3. Create an API Key
 4. Add the API Key on the .env.local
 
