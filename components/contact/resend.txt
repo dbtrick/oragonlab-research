@@ -1,0 +1,15 @@
+How to configure resend
+npm install resend
+
+1. Sign up at Resend
+2. Crate .env.local on the root directory 
+3. Create an API Key
+4. Add the API Key on the .env.local
+
+Flow:
+Contact form (client)
+  ↓ POST fetch
+/app/api/contact/route.ts (server)
+  ↓ Resend API
+Email lands in your inbox
+
