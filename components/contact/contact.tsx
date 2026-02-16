@@ -115,47 +115,55 @@ const Contact = ({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [interest, setInterest] = useState("");
+  const [interest, setInterest] = useState("strategic"); // default value
 
   /* ------------------------------ Submit Handler ------------------------------ */
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+  setSuccess(false);
 
-    const formData = new FormData(e.currentTarget);
+  const form = e.currentTarget; // save a reference to the form
+  const formData = new FormData(form);
 
-    const payload = {
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      email: formData.get("email"),
-      organization: formData.get("organization"),
-      message: formData.get("message"),
-      interest,
-    };
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error("Failed");
-
-      setSuccess(true);
-      setError(null);
-      e.currentTarget.reset();
-      setInterest("");
-    } catch {
-      setSuccess(false);
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const payload = {
+    firstName: formData.get("firstName") || "",
+    lastName: formData.get("lastName") || "",
+    email: formData.get("email") || "",
+    organization: formData.get("organization") || "",
+    message: formData.get("message") || "",
+    interest,
   };
+
+  try {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok || !data?.success) {
+      console.error("API response error:", data);
+      throw new Error(data?.error || "Failed to send message");
+    }
+
+    setSuccess(true);
+    setError(null);
+    form.reset();       
+    setInterest("strategic"); 
+  } catch (err: any) {
+    console.error("Submit error:", err);
+    setSuccess(false);
+    setError(err.message || "Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <section className={cn("py-32", className)}>
@@ -194,20 +202,20 @@ const Contact = ({
                 <div className="flex w-full items-center gap-4">
                   <FormGroup>
                     <Label>First Name</Label>
-                    <Input 
-                      name="firstName" 
-                      placeholder="First name" 
-                      className="bg-background" 
-                      required 
+                    <Input
+                      name="firstName"
+                      placeholder="First name"
+                      className="bg-background"
+                      required
                     />
                   </FormGroup>
                   <FormGroup>
                     <Label>Last Name</Label>
-                    <Input 
-                      name="lastName" 
-                      placeholder="Last name" 
-                      className="bg-background" 
-                      required 
+                    <Input
+                      name="lastName"
+                      placeholder="Last name"
+                      className="bg-background"
+                      required
                     />
                   </FormGroup>
                 </div>
@@ -225,11 +233,11 @@ const Contact = ({
 
                 <FormGroup>
                   <Label>Organization</Label>
-                  <Input 
-                    name="organization" 
-                    placeholder="Company or Agency name" 
-                    className="bg-background" 
-                    required 
+                  <Input
+                    name="organization"
+                    placeholder="Company or Agency name"
+                    className="bg-background"
+                    required
                   />
                 </FormGroup>
 

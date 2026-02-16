@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Initialize Resend with your API key (server-only)
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
@@ -17,7 +16,6 @@ export async function POST(req: Request) {
       interest,
     } = body;
 
-    // Basic validation (you can expand later)
     if (!email || !message) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -25,9 +23,10 @@ export async function POST(req: Request) {
       );
     }
 
-    await resend.emails.send({
-      from: process.env.CONTACT_FROM_EMAIL!, // verified sender
-      to: process.env.CONTACT_TO_EMAIL!,     // your inbox
+    // Capture the response from Resend
+    const { data, error } = await resend.emails.send({
+      from: process.env.CONTACT_FROM_EMAIL!, 
+      to: process.env.CONTACT_TO_EMAIL!,     
       subject: `New Contact Message — ${firstName} ${lastName}`,
       replyTo: email,
       html: `
@@ -41,12 +40,17 @@ export async function POST(req: Request) {
       `,
     });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Contact form error:", error);
+    // Check if Resend itself returned an error
+    if (error) {
+      console.error("Resend API Error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
+    return NextResponse.json({ success: true, id: data?.id });
+  } catch (error: any) {
+    console.error("Contact form crash:", error);
     return NextResponse.json(
-      { error: "Failed to send message" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
