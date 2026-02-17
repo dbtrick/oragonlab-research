@@ -61,7 +61,7 @@ interface Navbar1Props {
 
 const Navbar = ({
   logo = {
-    url: "http://localhost:3000/",
+    url: "https://oragonlab-research-1h1nxl4n3-dbtricks-projects.vercel.app/",
     // src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
     // alt: "logo",
     title: "ORAGON LAB RESEARCH",
